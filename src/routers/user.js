@@ -3,16 +3,12 @@ const router = express.Router()
 const User = require('../models/user')
 const auth = require('../middleware/auth')
 
-const timestamp = Date.now();
-const date = new Date(timestamp);
-const Time = `${date}`
-
 router.post('/signup',async(req,res)=>{
     try{
         const user = new User(req.body)
         await user.save()
         const token = await user.generateToken()
-        res.status(200).send({Time,user,token})
+        res.status(200).send({user,token})
     }catch(e){
         res.status(400).send(e)
     }
@@ -22,7 +18,7 @@ router.post('/login',async(req,res)=>{
   try{
    const user = await User.findByCredentials(req.body.email,req.body.password)
    const token = await user.generateToken()
-   res.status(200).send({Time,user,token})
+   res.status(200).send({user,token})
   }catch(e){
    res.status(400).send(e.message)
   }
@@ -41,7 +37,7 @@ router.patch('/user/profile',auth ,async(req,res)=>{
          }
         updates.forEach((update)=>{user[update] = req.body[update] })
         await user.save()
-         res.status(200).send({Time,user})
+         res.status(200).send({user})
      }catch(e){
          res.status(400).send(e.message)
      }
@@ -53,7 +49,7 @@ router.delete('/user/profile',auth,async(req,res)=>{
         if(!user){
             return res.status(401).send('unable to find user')
         }
-        res.send({Time,user})
+        res.send({user})
     }catch(e){
         res.status(400).send(e.message)
     }

@@ -51,6 +51,10 @@ const userSchema = new mongoose.Schema({
          type:String,
          required:true
      }]
+    },
+     {
+    timestamps:{currentTime:()=>new Date().getTime() + (2*60*60*1000)
+    }
 })
 
 userSchema.virtual('news',{
@@ -78,7 +82,7 @@ userSchema.statics.findByCredentials = async(email,password)=>{
 }
 userSchema.methods.generateToken = async function () {
     const user = this
-    const token = jwt.sign({ _id: user._id.toString() }, 'task3')
+    const token = jwt.sign({ _id: user._id.toString() },process.env.JWT_SECRET)
     user.tokens = user.tokens.concat(token)
     await user.save()
     return token
